@@ -1,0 +1,13 @@
+POST http://localhost:8080/api/v1/movies
+Content-Type: application/json
+
+{
+  "name": "Inception",
+  "releaseDate": "2016-07-16"
+}
+###
+GET http://localhost:8080/api/v1/movies
+###
+GET http://localhost:8080/api/v1/movies/2
+###
+DELETE http://localhost:8080/api/v1/movies/3
