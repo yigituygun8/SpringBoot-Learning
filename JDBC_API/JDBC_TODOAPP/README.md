@@ -1,0 +1,6 @@
+- I will be using JDBC to connect to H2 database, which is:
+  - an in-memory, open-source database written in Java.
+  - lightweight and fast, making it ideal for development and testing.
+  - supports standard SQL and JDBC API, making it easy to integrate with Java applications.
+  - can be embedded in Java applications or run in server mode for multi-user access.
+- Doing CRUD operations -> Create, Read, Update, Delete
