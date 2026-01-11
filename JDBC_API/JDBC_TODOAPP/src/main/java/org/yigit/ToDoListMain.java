@@ -9,7 +9,7 @@ public class ToDoListMain {
         TaskRepository.initializeDatabase();
 
         // Delete all tasks for a clean start (testing purposes)
-        TaskRepository.deleteAll();
+        /*TaskRepository.deleteAll();*/
 
         // Add a sample task
         Task task = new Task("Sample task");

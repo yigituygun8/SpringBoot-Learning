@@ -3,6 +3,8 @@ package org.yigit;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,19 +12,27 @@ import java.util.List;
 
 // TaskRepository will handle all database operations related to tasks, such as adding, updating, deleting, and retrieving tasks.
 public class TaskRepository {
+    // Create a HikariDataSource instance for connection pooling only ONCE,
+    // so it can be reused across multiple database operations
+    private static final HikariDataSource dataSource;
+
+    static {
+        dataSource = new HikariDataSource();
+        Path dbPath = Paths.get(System.getProperty("user.dir"), "todo");
+        dataSource.setJdbcUrl("jdbc:h2:file:" + dbPath.toAbsolutePath() + ";AUTO_SERVER=TRUE");
+        System.out.println("Database path: " + dbPath.toAbsolutePath());
+        dataSource.setUsername("sa");
+        dataSource.setPassword("");
+        System.out.println("HikariDataSource initialized");
+    }
 
     private static DataSource getDataSource() {
         // Create a HikariDataSource without try-with-resources so that it remains open
         // if db file not exists, it will be created automatically in the project root directory
         // AUTO_SERVER=TRUE allows multiple connections to the same database from different processes
-        HikariDataSource hikariDataSource = new HikariDataSource();
-        hikariDataSource.setJdbcUrl("jdbc:h2:./todo;AUTO_SERVER=TRUE"); // set the JDBC URL for H2 database
-        if(hikariDataSource.isClosed()) {
-            System.out.println("DataSource is closed.");
-        } else {
-            System.out.println("DataSource is open.");
-        }
-        return hikariDataSource;
+        // "file" is used for file-based databases, "mem" is used for in-memory databases
+        // file-based databases persist data on disk and stays after application restarts, while in-memory databases store data in RAM and are lost when the application stops
+        return dataSource;
     }
 
     public static void initializeDatabase() {
