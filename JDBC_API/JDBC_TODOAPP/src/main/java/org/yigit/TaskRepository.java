@@ -1,6 +1,7 @@
 package org.yigit;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.flywaydb.core.Flyway;
 
 import javax.sql.DataSource;
 import java.nio.file.Path;
@@ -35,7 +36,15 @@ public class TaskRepository {
         return dataSource;
     }
 
-    public static void initializeDatabase() {
+    public static void migrateDatabase() {
+        Flyway flyway = Flyway.configure()
+                .dataSource(getDataSource())
+                .load();
+        flyway.migrate();
+        System.out.println("Database migration completed.");
+    }
+
+   /* public static void initializeDatabase() {
         try (Connection con = getDataSource().getConnection()) {
             String createTableSQL = """
                         create table if not exists task (
@@ -50,6 +59,8 @@ public class TaskRepository {
             throw new RuntimeException("Error initializing database", e);
         }
     }
+    Since I now added Flyway for database migrations, this method is no longer needed.
+    */
 
     // PreparedStatement is used when you want to execute the same SQL multiple times with different parameters. faster for repeated queries
     // Safe against SQL injection attacks as parameters are set separately
@@ -57,9 +68,10 @@ public class TaskRepository {
     public static void addTask(Task task) {
         // try-with-resources to ensure connection is closed automatically
         try(Connection con = getDataSource().getConnection()) {
-            String insertSQL = "insert into task (name) values (?)";
+            String insertSQL = "insert into task (name, status) values (?, ?)";
             var ps = con.prepareStatement(insertSQL);
             ps.setString(1, task.getName()); // getter for task name
+            ps.setString(2, task.getStatus()); // getter for task status
             ps.execute();
             System.out.println("Task " + task.getName() + " added successfully.");
         } catch (SQLException e) {
@@ -70,10 +82,11 @@ public class TaskRepository {
 
     public static void updateTask(Task task) {
         try(Connection con = getDataSource().getConnection()) {
-            String updateSQL = "update task set name = ? where id = ?";
+            String updateSQL = "update task set name = ?, status = ? where id = ?";
             var ps = con.prepareStatement(updateSQL);
             ps.setString(1, task.getName());
-            ps.setInt(2, task.getId());
+            ps.setString(2, task.getStatus());
+            ps.setInt(3, task.getId());
             ps.executeUpdate();
             System.out.println("Task with id " + task.getId() + " updated successfully.");
         } catch (SQLException e) {
@@ -110,18 +123,13 @@ public class TaskRepository {
         try (Connection con = getDataSource().getConnection()) {
             String selectAllSQL = "select * from task";
             var s = con.createStatement();
-
-            // executeQuery is used for select statements and returns a ResultSet object, which is a table of data representing the result of the query
             var rs = s.executeQuery(selectAllSQL);
 
-            Task task = null;
-            int id;
-            String name;
             while(rs.next()) {
-                id = rs.getInt("id");
-                name = rs.getString("name");
-                task = new Task(id, name);
-                tasks.add(task);
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String status = rs.getString("status");
+                tasks.add(new Task(id, name, status));
             }
             return tasks;
         } catch (SQLException e) {
@@ -134,14 +142,14 @@ public class TaskRepository {
             String selectByIdSQL = "select * from task where id = ?";
             var ps = con.prepareStatement(selectByIdSQL);
             ps.setInt(1, taskIdSearch);
-            // ps will return only one record as id is primary key
             var rsTask = ps.executeQuery();
             if(rsTask.next()) {
                 int id = rsTask.getInt("id");
                 String name = rsTask.getString("name");
-                return new Task(id, name);
+                String status = rsTask.getString("status");
+                return new Task(id, name, status);
             } else {
-                return null; // no task found with the given id
+                return null;
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error getting task by id!" ,e);

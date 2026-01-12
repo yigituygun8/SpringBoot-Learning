@@ -5,11 +5,11 @@ import java.util.List;
 // For Business Logic related to tasks
 public class TaskService {
 
-    public static void addNewTask(String taskName) {
+    public static void addNewTask(String taskName, String status) {
         if(taskName == null || taskName.trim().isEmpty()) {
             throw new IllegalArgumentException("Task name cannot be empty");
         }
-        Task task = new Task(taskName.trim());
+        Task task = new Task(taskName.trim(), status.trim());
         TaskRepository.addTask(task); // call from DB layer
     }
 

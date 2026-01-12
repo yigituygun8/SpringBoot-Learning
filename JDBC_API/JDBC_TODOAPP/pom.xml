@@ -32,6 +32,23 @@
             <artifactId>HikariCP</artifactId>
             <version>7.0.2</version>
         </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+        Flyway is a database migration tool that helps manage and version control database schema changes.
+        It allows developers to define database migrations as scripts and apply them in a controlled manner.
+        This ensures that database schema changes are consistent across different environments and helps
+        maintain the integrity of the database structure over time.
+
+
+
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>11.20.1</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

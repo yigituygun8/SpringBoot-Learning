@@ -1,19 +1,21 @@
 package org.yigit;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.flywaydb.core.Flyway;
 
 public class ToDoListMain {
-    public static void main(String[] args) {
-        // Initialize the database (create table if not exists)
-        TaskRepository.initializeDatabase();
+     static void main(String[] args) {
+        /*Initialize the database (create table if not exists)
+        TaskRepository.initializeDatabase();*/
 
         // Delete all tasks for a clean start (testing purposes)
         /*TaskRepository.deleteAll();*/
 
+        // Since I don't use Spring Boot, I need to run Flyway migrations manually at application startup
+        TaskRepository.migrateDatabase();
+
         // Add a sample task
-        Task task = new Task("Sample task");
-        TaskRepository.addTask(task);
+        Task task = new Task("Sample task", "Done");
+        TaskService.addNewTask("Sample task", "Done");
 
         // Retrieve and print all tasks
         System.out.println(TaskService.displayAllTasks());
