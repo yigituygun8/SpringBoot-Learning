@@ -1,9 +1,7 @@
 package org.yigit;
 
-import org.flywaydb.core.Flyway;
-
 public class ToDoListMain {
-     static void main(String[] args) {
+     public static void main(String[] args) {
         /*Initialize the database (create table if not exists)
         TaskRepository.initializeDatabase();*/
 
