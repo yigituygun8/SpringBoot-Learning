@@ -11,10 +11,6 @@ public class ToDoListMain {
         // Since I don't use Spring Boot, I need to run Flyway migrations manually at application startup
         TaskRepository.migrateDatabase();
 
-        // Add a sample task
-        Task task = new Task("Sample task", "Done");
-        TaskService.addNewTask("Sample task", "Done");
-
         // Retrieve and print all tasks
         System.out.println(TaskService.displayAllTasks());
 
