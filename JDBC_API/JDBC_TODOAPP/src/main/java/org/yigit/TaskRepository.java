@@ -80,27 +80,32 @@ public class TaskRepository {
         }
     }
 
-    public static void updateTask(Task task) {
+    public static void updateTask(int updateId, String newName, String newStatus) {
         try(Connection con = getDataSource().getConnection()) {
             String updateSQL = "update task set name = ?, status = ? where id = ?";
             var ps = con.prepareStatement(updateSQL);
-            ps.setString(1, task.getName());
-            ps.setString(2, task.getStatus());
-            ps.setInt(3, task.getId());
+            ps.setString(1, newName);
+            ps.setString(2, newStatus);
+            ps.setInt(3, updateId);
             ps.executeUpdate();
-            System.out.println("Task with id " + task.getId() + " updated successfully.");
+            System.out.println("Task with id " + updateId + " updated successfully.");
         } catch (SQLException e) {
             throw new RuntimeException("Error in updating table", e);
         }
     }
 
-    public static void deleteTask(Task task) {
+    public static void deleteTask(int deleteId) {
         try(Connection con = getDataSource().getConnection()) {
             String deleteSQL = "delete from task where id = ?";
             var ps = con.prepareStatement(deleteSQL);
-            ps.setInt(1, task.getId());
-            ps.executeUpdate();
-            System.out.println("Task with id " + task.getId() + " deleted successfully.");
+            if(getTaskById(deleteId) == null) {
+                throw new RuntimeException("Task with id " + deleteId + " does not exist.");
+            }
+            else {
+                ps.setInt(1, deleteId);
+                ps.executeUpdate();
+                System.out.println("Task with id " + deleteId + " deleted successfully.");
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error in deleting task from table", e);
         }
