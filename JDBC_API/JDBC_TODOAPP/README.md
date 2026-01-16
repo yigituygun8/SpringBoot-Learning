@@ -4,3 +4,7 @@
   - supports standard SQL and JDBC API, making it easy to integrate with Java applications.
   - can be embedded in Java applications or run in server mode for multi-user access.
 - Doing CRUD operations -> Create, Read, Update, Delete
+- Added Flyway for database migrations and version control, which helps manage changes to the database schema over time.
+- Using Maven as the build automation tool to manage project dependencies and build lifecycle.
+  - Using commands like "mvn clean package", "mvn clean install" to build the project.
+  - "java -jar target/JDBC-1.0-SNAPSHOT.jar" to run the project as JAR file.
